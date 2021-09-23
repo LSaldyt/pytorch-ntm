@@ -1,5 +1,0 @@
-argcomplete
-attrs
-numpy
-pytest
-
