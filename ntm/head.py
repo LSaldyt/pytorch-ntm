@@ -4,7 +4,6 @@ from torch import nn
 import torch.nn.functional as F
 import numpy as np
 
-
 def _split_cols(mat, lengths):
     """Split a 2D matrix to variable length columns."""
     assert mat.size()[1] == sum(lengths), "Lengths must be summed to num columns"
@@ -13,7 +12,6 @@ def _split_cols(mat, lengths):
     for s, e in zip(l[:-1], l[1:]):
         results += [mat[:, s:e]]
     return results
-
 
 class NTMHeadBase(nn.Module):
     """An NTM Read/Write Head."""
@@ -48,9 +46,7 @@ class NTMHeadBase(nn.Module):
         γ = 1 + F.softplus(γ)
 
         w = self.memory.address(k, β, g, s, γ, w_prev)
-
         return w
-
 
 class NTMReadHead(NTMHeadBase):
     def __init__(self, memory, controller_size):
@@ -58,6 +54,7 @@ class NTMReadHead(NTMHeadBase):
 
         # Corresponding to k, β, g, s, γ sizes from the paper
         self.read_lengths = [self.M, 1, 1, 3, 1]
+
         self.fc_read = nn.Linear(controller_size, sum(self.read_lengths))
         self.reset_parameters()
 
@@ -85,7 +82,6 @@ class NTMReadHead(NTMHeadBase):
         # Read from memory
         w = self._address_memory(k, β, g, s, γ, w_prev)
         r = self.memory.read(w)
-
         return r, w
 
 
@@ -124,5 +120,4 @@ class NTMWriteHead(NTMHeadBase):
         # Write to memory
         w = self._address_memory(k, β, g, s, γ, w_prev)
         self.memory.write(w, e, a)
-
         return w

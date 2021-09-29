@@ -159,6 +159,14 @@ def evaluate(net, criterion, X, Y):
 
     return result
 
+def show_io(x, y):
+    import plotly
+    from plotly.subplots import make_subplots
+    import plotly.graph_objects as go
+    fig = make_subplots(rows=1, cols=2)
+    fig.add_trace(go.Heatmap(z=x), row=1, col=1)
+    fig.add_trace(go.Heatmap(z=y), row=1, col=2)
+    fig.show()
 
 def train_model(model, args):
     num_batches = model.params.num_batches
@@ -172,8 +180,12 @@ def train_model(model, args):
     seq_lengths = []
     start_ms = get_ms()
 
+    average_train = 0
     for batch_num, x, y in model.dataloader:
+        start = time.time()
         loss, cost = train_batch(model.net, model.criterion, model.optimizer, x, y)
+        average_train += time.time() - start
+        print(f'\nAverage batch training time: {average_train / (batch_num + 1)}')
         losses += [loss]
         costs += [cost]
         seq_lengths += [y.size(0)]
