@@ -9,8 +9,7 @@ from .memory import NTMMemory
 
 class EncapsulatedNTM(nn.Module):
 
-    def __init__(self, num_inputs, num_outputs,
-                 controller_size, controller_layers, num_heads, N, M):
+    def __init__(self, settings):
         """Initialize an EncapsulatedNTM.
 
         :param num_inputs: External number of inputs.
@@ -21,28 +20,29 @@ class EncapsulatedNTM(nn.Module):
         :param N: Number of rows in the memory bank.
         :param M: Number of cols/features in the memory bank.
         """
+
         super(EncapsulatedNTM, self).__init__()
 
         # Save args
-        self.num_inputs = num_inputs
-        self.num_outputs = num_outputs
-        self.controller_size = controller_size
-        self.controller_layers = controller_layers
-        self.num_heads = num_heads
-        self.N = N
-        self.M = M
+        self.num_inputs = settings.n + 2
+        self.num_outputs = settings.n + 2
+        self.controller_size = settings.controller_size
+        self.controller_layers = 1
+        self.num_heads = 1
+        self.N = settings.m # M and N are intentionally reversed from settings
+        self.M = settings.n + 2
 
         # Create the NTM components
-        memory = NTMMemory(N, M)
-        controller = LSTMController(num_inputs + M*num_heads, controller_size, controller_layers)
+        memory = NTMMemory(self.N, self.M)
+        controller = LSTMController(self.num_inputs + self.M*self.num_heads, self.controller_size, self.controller_layers)
         heads = nn.ModuleList([])
-        for i in range(num_heads):
+        for i in range(self.num_heads):
             heads += [
-                NTMReadHead(memory, controller_size),
-                NTMWriteHead(memory, controller_size)
+                NTMReadHead(memory, self.controller_size),
+                NTMWriteHead(memory, self.controller_size)
             ]
 
-        self.ntm = NTM(num_inputs, num_outputs, controller, memory, heads)
+        self.ntm = NTM(self.num_inputs, self.num_outputs, controller, memory, heads)
         self.memory = memory
 
     def init_sequence(self, batch_size):
