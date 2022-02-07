@@ -24,8 +24,8 @@ class EncapsulatedNTM(nn.Module):
         super(EncapsulatedNTM, self).__init__()
 
         # Save args
-        self.num_inputs = settings.res
-        self.num_outputs = settings.res
+        self.num_inputs = settings.num_inputs
+        self.num_outputs = settings.num_outputs
         self.controller_size = settings.controller_size
         self.controller_layers = 1
         self.num_heads = 1
