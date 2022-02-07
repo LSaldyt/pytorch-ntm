@@ -24,13 +24,13 @@ class EncapsulatedNTM(nn.Module):
         super(EncapsulatedNTM, self).__init__()
 
         # Save args
-        self.num_inputs = settings.num_inputs
-        self.num_outputs = settings.num_outputs
+        self.num_inputs = settings.input_size
+        self.num_outputs = settings.output_size
         self.controller_size = settings.controller_size
         self.controller_layers = 1
         self.num_heads = 1
         self.N = settings.m # M and N are intentionally reversed from settings
-        self.M = settings.res
+        self.M = settings.n
 
         # Create the NTM components
         memory = NTMMemory(self.N, self.M)
