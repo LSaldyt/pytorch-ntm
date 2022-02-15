@@ -29,8 +29,8 @@ class EncapsulatedNTM(nn.Module):
         self.controller_size = settings.controller_size
         self.controller_layers = 1
         self.num_heads = 1
-        self.N = settings.m # M and N are intentionally reversed from settings
-        self.M = settings.n
+        self.N = settings.memory_width
+        self.M = settings.memory_res
 
         # Create the NTM components
         memory = NTMMemory(self.N, self.M)
