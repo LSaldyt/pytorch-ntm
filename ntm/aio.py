@@ -44,6 +44,10 @@ class EncapsulatedNTM(nn.Module):
 
         self.ntm = NTM(self.num_inputs, self.num_outputs, controller, memory, heads)
         self.memory = memory
+        self.ntm.init()
+
+    def init(self):
+        self.ntm.init()
 
     def init_sequence(self, batch_size):
         """Initializing the state."""

@@ -56,13 +56,13 @@ class NTMReadHead(NTMHeadBase):
         self.read_lengths = [self.M, 1, 1, 3, 1]
 
         self.fc_read = nn.Linear(controller_size, sum(self.read_lengths))
-        self.reset_parameters()
+        self.init()
 
     def create_new_state(self, batch_size):
         # The state holds the previous time step address weightings
         return torch.zeros(batch_size, self.N)
 
-    def reset_parameters(self):
+    def init(self):
         # Initialize the linear layers
         nn.init.xavier_uniform_(self.fc_read.weight, gain=1.4)
         nn.init.normal_(self.fc_read.bias, std=0.01)
@@ -92,12 +92,12 @@ class NTMWriteHead(NTMHeadBase):
         # Corresponding to k, β, g, s, γ, e, a sizes from the paper
         self.write_lengths = [self.M, 1, 1, 3, 1, self.M, self.M]
         self.fc_write = nn.Linear(controller_size, sum(self.write_lengths))
-        self.reset_parameters()
+        self.init()
 
     def create_new_state(self, batch_size):
         return torch.zeros(batch_size, self.N)
 
-    def reset_parameters(self):
+    def init(self):
         # Initialize the linear layers
         nn.init.xavier_uniform_(self.fc_write.weight, gain=1.4)
         nn.init.normal_(self.fc_write.bias, std=0.01)

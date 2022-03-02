@@ -22,7 +22,7 @@ class LSTMController(nn.Module):
         self.lstm_h_bias = Parameter(torch.randn(self.num_layers, 1, self.num_outputs) * 0.05)
         self.lstm_c_bias = Parameter(torch.randn(self.num_layers, 1, self.num_outputs) * 0.05)
 
-        self.reset_parameters()
+        self.init()
 
     def create_new_state(self, batch_size):
         # Dimension: (num_layers * num_directions, batch, hidden_size)
@@ -30,7 +30,7 @@ class LSTMController(nn.Module):
         lstm_c = self.lstm_c_bias.clone().repeat(1, batch_size, 1)
         return lstm_h, lstm_c
 
-    def reset_parameters(self):
+    def init(self):
         for p in self.lstm.parameters():
             if p.dim() == 1:
                 nn.init.constant_(p, 0)

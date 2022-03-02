@@ -31,7 +31,6 @@ class NTM(nn.Module):
         self.N, self.M = memory.size()
         _, self.controller_size = controller.size()
 
-        # Initialize the initial previous read values to random biases
         self.num_read_heads = 0
         self.init_r = []
         for head in heads:
@@ -46,7 +45,7 @@ class NTM(nn.Module):
         # Initialize a fully connected layer to produce the actual output:
         #   [controller_output; previous_reads ] -> output
         self.fc = nn.Linear(self.controller_size + self.num_read_heads * self.M, num_outputs)
-        self.reset_parameters()
+        self.init()
 
     def create_new_state(self, batch_size):
         init_r = [r.clone().repeat(batch_size, 1) for r in self.init_r]
@@ -54,10 +53,16 @@ class NTM(nn.Module):
         heads_state = [head.create_new_state(batch_size) for head in self.heads]
         return init_r, controller_state, heads_state
 
-    def reset_parameters(self):
+    def init(self):
+        # Initialize the initial previous read values to random biases
         # Initialize the linear layer
         nn.init.xavier_uniform_(self.fc.weight, gain=1)
         nn.init.normal_(self.fc.bias, std=0.01)
+        # Initialize all sub-modules
+        for head in self.heads:
+            head.init()
+        self.memory.init()
+        self.controller.init()
 
     def forward(self, x, prev_state):
         """NTM forward function.
