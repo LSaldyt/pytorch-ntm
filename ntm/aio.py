@@ -34,14 +34,12 @@ class EncapsulatedNTM(nn.Module):
 
         # Create the NTM components
         memory = NTMMemory(self.N, self.M)
-        controller = LSTMController(self.num_inputs + self.M*self.num_heads, self.controller_size, self.controller_layers)
+        controller = LSTMController(self.num_inputs + self.M * self.num_heads,
+            self.controller_size, self.controller_layers)
         heads = nn.ModuleList([])
         for i in range(self.num_heads):
-            heads += [
-                NTMReadHead(memory, self.controller_size),
-                NTMWriteHead(memory, self.controller_size)
-            ]
-
+            heads += [NTMReadHead(memory, self.controller_size),
+                      NTMWriteHead(memory, self.controller_size)]
         self.ntm = NTM(self.num_inputs, self.num_outputs, controller, memory, heads)
         self.memory = memory
         self.ntm.init()
