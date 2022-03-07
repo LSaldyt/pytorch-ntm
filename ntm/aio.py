@@ -27,8 +27,8 @@ class EncapsulatedNTM(nn.Module):
         self.num_inputs = settings.input_size
         self.num_outputs = settings.output_size
         self.controller_size = settings.controller_size
-        self.controller_layers = 1
-        self.num_heads = 1
+        self.controller_layers = settings.controller_depth
+        self.num_heads = settings.n_read_heads
         self.N = settings.memory_width
         self.M = settings.memory_res
 
@@ -55,8 +55,8 @@ class EncapsulatedNTM(nn.Module):
 
     def forward(self, x=None):
         if x is None:
+            1/0
             x = torch.zeros(self.batch_size, self.num_inputs)
-
         o, self.previous_state = self.ntm(x, self.previous_state)
         return o, self.previous_state
 
